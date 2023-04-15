@@ -2,13 +2,19 @@ package com.imagegallery.store.Controller;
 import com.imagegallery.store.DTO.*;
 import com.imagegallery.store.Model.User;
 import com.imagegallery.store.Repo.RegistrationRepo;
+import com.imagegallery.store.Response.FileResponse;
 import com.imagegallery.store.Response.ForgotResponse;
 import com.imagegallery.store.Response.LoginResponse;
 import com.imagegallery.store.Response.OTPResponse;
+import com.imagegallery.store.Service.FileService;
 import com.imagegallery.store.Service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Random;
 
@@ -20,6 +26,8 @@ public class UserController {
     private RegistrationService registrationService;
     @Autowired(required = false)
     private Random random;
+    @Autowired(required = false)
+    private FileService fileService;
     @GetMapping(value = "/jewel")
     public List<User>getTreeById() {
         return registrationRepo.findAll();
@@ -49,5 +57,12 @@ public class UserController {
         OTPResponse otpResponse = registrationService.newPassword(newPasswordDTO);
         return ResponseEntity.ok(otpResponse);
     }
-
+    @PostMapping(path = "/user/uploadimageinfo", consumes = {
+            MediaType.APPLICATION_JSON_VALUE,
+            MediaType.MULTIPART_FORM_DATA_VALUE
+    })
+    public ResponseEntity<?> uploadImageInfo(@ModelAttribute ImageStoreDTO imageStoreDTO) throws UncheckedIOException, IOException {
+            FileResponse fileResponse = fileService.uploadImageInfo(imageStoreDTO);
+            return ResponseEntity.ok(fileResponse);
+    }
 }

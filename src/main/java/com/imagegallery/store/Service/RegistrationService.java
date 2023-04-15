@@ -11,6 +11,5 @@ public interface RegistrationService {
     LoginResponse loginUser(LoginDTO loginDTO);
     ForgotResponse forgotUser(ForgotDTO forgotDTO);
     OTPResponse userOTP(OTPDTO otpdto);
-
     OTPResponse newPassword(NewPasswordDTO newPasswordDTO);
 }
