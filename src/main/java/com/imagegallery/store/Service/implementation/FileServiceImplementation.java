@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.Column;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -32,7 +31,6 @@ public class FileServiceImplementation implements FileService {
         String filePath = path + File.separator + randomNumber+filename;
         file.transferTo(Paths.get(filePath));
         if (Objects.equals(email, DBEmail)){
-            System.out.println("Your is present in you database");
             ImageInfo imageInfo = new ImageInfo(
                 filePath,
                     title,

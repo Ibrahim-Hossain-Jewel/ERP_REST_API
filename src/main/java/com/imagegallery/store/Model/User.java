@@ -30,7 +30,6 @@ public class User {
         this.password = password;
     }
     public User() {
-        System.out.println("From your registration entity");
     }
 
     public Long getUserid() {

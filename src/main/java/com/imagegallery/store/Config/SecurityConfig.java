@@ -42,11 +42,9 @@ public class SecurityConfig {
             mimemessage.setFrom(new InternetAddress(from));
             mimemessage.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             mimemessage.setSubject(subject);
-//            mimemessage.setText(message);
             mimemessage.setContent(message, "text/HTML"); //used to pass html content to the email.
             Transport.send(mimemessage);
             f=true;
-            System.out.println("Send Successful.");
         } catch (AddressException e) {
             e.printStackTrace();
         } catch (MessagingException e) {

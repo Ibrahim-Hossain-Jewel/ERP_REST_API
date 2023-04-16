@@ -81,9 +81,6 @@ public class RegistrationImplementation implements RegistrationService {
             Boolean flag = securityConfig.sendMail(from, to, subject, message);
             if (flag){
                 session.setAttribute("OTP",myOTP);
-                //session.setAttribute("email", to);
-                //Generated OTP and current OTP is same then user will found set new password form.
-                System.out.println("your OTP is : " + session.getAttribute("OTP"));
                 return  new ForgotResponse("Check your E-mail "+ to, true);
             }else{
                 return new ForgotResponse("your mail server down",false);
@@ -97,7 +94,6 @@ public class RegistrationImplementation implements RegistrationService {
 
     @Override
     public OTPResponse userOTP(OTPDTO otpdto) {
-        System.out.println("your userOTP session otp is : " + session.getAttribute("OTP"));
         try {
             int userOTP = otpdto.getOtp();
             session.setAttribute("newOTP",userOTP);
