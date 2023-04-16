@@ -1,4 +1,4 @@
-# Back_Image_Gallery Database design
+# Back_Image_Gallery Environment setup.
 Database MySQL
 schema name : storegallery
 store table name : user
