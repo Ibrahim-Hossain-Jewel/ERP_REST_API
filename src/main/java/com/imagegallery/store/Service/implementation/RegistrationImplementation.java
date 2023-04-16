@@ -119,7 +119,6 @@ public class RegistrationImplementation implements RegistrationService {
         String user1Password = newPasswordDTO.getPassword();
         int emailOTP = (int)session.getAttribute("OTP");
         int newOTP = (int)session.getAttribute("newOTP");
-        System.out.println("Email OTP : "+ emailOTP + "newOTP : " + newOTP);
         if (emailOTP == newOTP){
             User user2 = registrationRepo.findByEmail(newPasswordDTO.getEmail());
             user2.setPassword(this.passwordEncoder.encode(newPasswordDTO.getPassword()));
@@ -131,4 +130,3 @@ public class RegistrationImplementation implements RegistrationService {
     }
 
 }
-//Model name is the domain object we
