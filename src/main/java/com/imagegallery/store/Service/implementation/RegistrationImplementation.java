@@ -76,7 +76,7 @@ public class RegistrationImplementation implements RegistrationService {
         if (user1 != null){
             String to = user1.getEmail();
             String from = "ibrahimhossain495@gmail.com";
-            String subject = "Alhamdulillha wow from Spring boot!";
+            String subject = "Your Image-Gallery OTP";
             String message = "OTP from Image-Gallery Application : <h1>"+myOTP + "</h1>";
             Boolean flag = securityConfig.sendMail(from, to, subject, message);
             if (flag){

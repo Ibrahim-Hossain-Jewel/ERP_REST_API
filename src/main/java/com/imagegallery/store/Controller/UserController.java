@@ -32,7 +32,7 @@ public class UserController {
     @Autowired(required = true)
     private ImageinfoRepo imageinfoRepo;
 
-    @GetMapping(value = "/jewel")
+    @GetMapping(value = "/alluserInfo")
     public List<User> getTreeById() {
         return registrationRepo.findAll();
     }
