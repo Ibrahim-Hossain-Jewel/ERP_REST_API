@@ -73,6 +73,7 @@ public class UserController {
         return ResponseEntity.ok(fileResponse);
     }
     //Data fetch for unauthenticated user.
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(path = "/all/user")
     public ResponseEntity<?> imageInfo() {
         List<ImageInfo> fileResponse = imageinfoRepo.findAll();
