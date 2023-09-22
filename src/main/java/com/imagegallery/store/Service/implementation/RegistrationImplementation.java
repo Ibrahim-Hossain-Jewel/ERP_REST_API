@@ -7,12 +7,14 @@ import com.imagegallery.store.Repo.RegistrationRepo;
 import com.imagegallery.store.Response.LoginResponse;
 import com.imagegallery.store.Response.ForgotResponse;
 import com.imagegallery.store.Response.OTPResponse;
+import com.imagegallery.store.Response.RegistrationResponse;
 import com.imagegallery.store.Service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -29,17 +31,43 @@ public class RegistrationImplementation implements RegistrationService {
     private SecurityConfig securityConfig;
     @Autowired
     HttpSession session;
+
     @Override
-    public String RegisterUser(RegistrationDTO registrationDTO) {
+    public RegistrationResponse UpdateUser(RegistrationDTO registrationDTO) {
+        User existUser = registrationRepo.findByEmail(registrationDTO.getEmail());
+        existUser.setUsername(registrationDTO.getUsername());
+        existUser.setMobilenumber(registrationDTO.getMobilenumber());
+        existUser.setAddress(registrationDTO.getAddress());
+        if (existUser != null) {
+            registrationRepo.save(existUser);
+            return new RegistrationResponse("Update Success", true);
+        }
+        return new RegistrationResponse("Registration First", false);
+    }
+    @Override
+    public RegistrationResponse RegisterUser(RegistrationDTO registrationDTO) {
         //Passing the user DTO value to the domain object (JPA Entity)
-        User user = new User(
-                registrationDTO.getUserid(),
-                registrationDTO.getUsername(),
-                registrationDTO.getEmail(),
-                this.passwordEncoder.encode(registrationDTO.getPassword())
-        );
-        registrationRepo.save(user);
-        return user.getUsername();
+        try{
+            User existUser = registrationRepo.findByEmail(registrationDTO.getEmail());
+            if (existUser == null) {
+                User user = new User(
+                        registrationDTO.getUserid(),
+                        registrationDTO.getUsername(),
+                        registrationDTO.getEmail(),
+                        this.passwordEncoder.encode(registrationDTO.getPassword()),
+                        registrationDTO.getMobilenumber(),
+                        registrationDTO.getAddress()
+                );
+                registrationRepo.save(user);
+                return new RegistrationResponse("Registration Success", true);
+            }else{
+                return new RegistrationResponse("Account already exist", false);
+            }
+        }catch (NullPointerException e){
+            System.out.println("Null pointer exception "+ e);
+        }
+
+        return new RegistrationResponse("Contact with service provider", false);
     }
     //Implementing the login checker
     @Override
@@ -76,8 +104,8 @@ public class RegistrationImplementation implements RegistrationService {
         if (user1 != null){
             String to = user1.getEmail();
             String from = "ibrahimhossain495@gmail.com";
-            String subject = "Your Image-Gallery OTP";
-            String message = "OTP from Image-Gallery Application : <h1>"+myOTP + "</h1>";
+            String subject = "Your G-bazar OTP";
+            String message = "OTP from G-bazar Application : <h1>"+ myOTP + "</h1>";
             Boolean flag = securityConfig.sendMail(from, to, subject, message);
             if (flag){
                 session.setAttribute("OTP",myOTP);
@@ -124,5 +152,22 @@ public class RegistrationImplementation implements RegistrationService {
             return new OTPResponse("Your are wrong user", false);
         }
     }
+
+    @Override
+    public User create(User image) {
+        return registrationRepo.save(image);
+    }
+
+    @Override
+    public List<User> viewAll() {
+        return (List<User>) registrationRepo.findAll();
+    }
+
+    @Override
+    public User viewById(long id) {
+        return registrationRepo.findById(id).get();
+    }
+
+
 
 }

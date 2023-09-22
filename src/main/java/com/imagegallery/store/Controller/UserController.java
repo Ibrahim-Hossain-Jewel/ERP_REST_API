@@ -1,13 +1,11 @@
 package com.imagegallery.store.Controller;
 import com.imagegallery.store.DTO.*;
 import com.imagegallery.store.Model.ImageInfo;
+import com.imagegallery.store.Model.RootUser;
 import com.imagegallery.store.Model.User;
 import com.imagegallery.store.Repo.ImageinfoRepo;
 import com.imagegallery.store.Repo.RegistrationRepo;
-import com.imagegallery.store.Response.FileResponse;
-import com.imagegallery.store.Response.ForgotResponse;
-import com.imagegallery.store.Response.LoginResponse;
-import com.imagegallery.store.Response.OTPResponse;
+import com.imagegallery.store.Response.*;
 import com.imagegallery.store.Service.FileService;
 import com.imagegallery.store.Service.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.sql.rowset.serial.SerialException;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Base64;
 import java.util.List;
 
 @RestController
@@ -32,22 +34,51 @@ public class UserController {
     @Autowired(required = true)
     private ImageinfoRepo imageinfoRepo;
 
-    @GetMapping(value = "/alluserInfo")
-    public List<User> getTreeById() {
-        return registrationRepo.findAll();
-    }
-
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path = "/user/registration")
-    public String registration(@RequestBody RegistrationDTO registrationDTO) {
-        String id = registrationService.RegisterUser(registrationDTO);
-        return id;
+    public ResponseEntity<?> registration(@RequestBody RegistrationDTO registrationDTO) {
+        RegistrationResponse registrationResponse = registrationService.RegisterUser(registrationDTO);
+        return ResponseEntity.ok(registrationResponse);
+    }
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(path = "/specificuserinfo")
+    public User getTreeById(@RequestParam("email") String email) {
+        User userInfo = registrationRepo.findByEmail(email);
+        userInfo.getUsername();
+        userInfo.getUserid();
+        userInfo.getMobilenumber();
+        return userInfo;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(path = "/user/update")
+    public ResponseEntity<?> update(@RequestBody RegistrationDTO registrationDTO) {
+        RegistrationResponse registrationResponse = registrationService.UpdateUser(registrationDTO);
+        return ResponseEntity.ok(registrationResponse);
+    }
+    // add image - post
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping("/add")
+    public String addImagePost(HttpServletRequest request, @RequestParam("useremail") String useremail, @RequestParam("image") MultipartFile file) throws IOException, SerialException, SQLException
+    {
+        byte[] bytes = file.getBytes();
+        System.out.println("image byte array" + bytes);
+        String encodedString = Base64
+                .getEncoder()
+                .encodeToString(bytes);
+        System.out.println("image encoded to the array " + encodedString);
+        User image = registrationRepo.findByEmail(useremail);
+        image.setImage(encodedString);
+        registrationService.create(image);
+        return "Success";
+    }
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(path = "/user/login")
     public ResponseEntity<?> loginUser(@RequestBody LoginDTO loginDTO) {
         LoginResponse loginResponse = registrationService.loginUser(loginDTO);
         return ResponseEntity.ok(loginResponse);
     }
+
 
     @PostMapping(path = "/user/forgot")
     public ResponseEntity<?> sendOTP(@RequestBody ForgotDTO forgotDTO) {
@@ -72,11 +103,13 @@ public class UserController {
         FileResponse fileResponse = this.fileService.uploadImage(path, file, email, title, description);
         return ResponseEntity.ok(fileResponse);
     }
+
     //Data fetch for unauthenticated user.
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(path = "/all/user")
-    public ResponseEntity<?> imageInfo() {
+    public ResponseEntity<?> imageInfo() throws IOException {
         List<ImageInfo> fileResponse = imageinfoRepo.findAll();
+//        StringUtils.cleanPath()
         return ResponseEntity.ok(fileResponse);
     }
     //for authenticated users
@@ -85,5 +118,4 @@ public class UserController {
         List<ImageInfo> fileResponse =  imageinfoRepo.findOneByEmail(useremail);
         return ResponseEntity.ok(fileResponse);
     }
-
 }
