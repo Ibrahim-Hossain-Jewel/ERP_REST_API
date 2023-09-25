@@ -1,4 +1,5 @@
 package com.imagegallery.store.Controller;
+import com.imagegallery.store.DTO.UpdateOrderStatusDTO;
 import com.imagegallery.store.Model.OrderTable;
 import com.imagegallery.store.Model.ProductsInfo;
 import com.imagegallery.store.Repo.OrderRepo;
@@ -28,6 +29,15 @@ public class ProductController {
     ProductRepo productRepo;
     @Autowired
     OrderRepo orderRepo;
+    //update order status
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(value = "/updateorder")
+    public ProductsResponse orderUpdate(UpdateOrderStatusDTO updateOrderStatusDTO){
+        OrderTable updateorder = orderRepo.findById(updateOrderStatusDTO.getOrderid()).get();
+        updateorder.setOrderstatus(updateOrderStatusDTO.getOrderstatus());
+        orderRepo.save(updateorder);
+        return new ProductsResponse("Order Updated", true);
+    }
     // add products - post
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/addproducts")
@@ -36,6 +46,7 @@ public class ProductController {
                                         @RequestParam("image") MultipartFile file,
                                         @RequestParam("price") String price,
                                         @RequestParam("buyprice") String buyprice,
+                                        @RequestParam("quantity") String quantity,
                                         @RequestParam("description") String description,
                                         @RequestParam("status") String status,
                                         @RequestParam("category") String category,
@@ -52,6 +63,7 @@ public class ProductController {
                 encodedString,
                 price,
                 buyprice,
+                quantity,
                 description,
                 status,
                 category,

@@ -91,6 +91,10 @@ public class OrderTable {
         this.orderstatus = orderstatus;
     }
 
+    public OrderTable(long orderid, String orderstatus){
+        this.orderid = orderid;
+        this.orderstatus = orderstatus;
+    }
     public String getOrderstatus() {
         return orderstatus;
     }

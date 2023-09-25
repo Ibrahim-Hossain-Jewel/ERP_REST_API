@@ -22,6 +22,8 @@ public class ProductsInfo {
     private String price;
     @Column(name = "buyprice")
     private String buyprice;
+    @Column(name = "quantity")
+    private String quantity;
     @Column(name = "description")
     private String description;
     @Column(name = "status")
@@ -45,12 +47,12 @@ public class ProductsInfo {
         this.description = description;
         this.status = status;
     }
-    public ProductsInfo( String name, String image, String price, String buyprice, String description, String status, String category, String email) {
-
+    public ProductsInfo( String name, String image, String price, String buyprice, String quantity, String description, String status, String category, String email) {
         this.name = name;
         this.image = image;
         this.price = price;
         this.buyprice = buyprice;
+        this.quantity = quantity;
         this.description = description;
         this.status = status;
         this.category = category;
@@ -62,6 +64,14 @@ public class ProductsInfo {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(String quantity) {
+        this.quantity = quantity;
     }
 
     public String getName() {
